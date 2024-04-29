@@ -1,0 +1,79 @@
+created: 20240429071841861
+creator: jilefo
+modified: 20240429071911589
+modifier: jilefo
+tags: 
+title: PVE7.4-15升级PVE8.0.3
+
+
+       一直在使用pve，因为其灵活可玩(折腾)性比较高，而且经过折腾之后其运行也非常稳定各种直通等也非常方便，所以一直没有再去折腾其他。由于个人对系统和软件类有些洁癖，就是有新版本发布后无论稳定性如何，都想试试看看。关于pve的全新安装值得买已经有N多大佬详细介绍过了，就在不进行说明了，本文主要记录说明如何从PVE7升级到PVE8。文中如有不当还请值得买的各位大佬指教。
+
+一、说明
+1、根据官方文档的说明，要想从pve7升级到pve8，需要先保证自己的当前系统为pve7的最后一个版本，当前pve7的最后一个版本应该是pve7.4-15，如果你的系统还是pve6，那这篇文章可能不太适合你，但是也有一定的参考意义，需要先从pve6升级到pve7。本文默认您的系统已经是pve7的任何版本。
+
+2、升级前注意进行备份，备份的过程本文不再详细描述，备份的内容包括但不限于已创建的虚拟机，容器，更新源，配置文件等关键的系统文件。
+
+3、任何夸大版本的更新都会有更新失败的风险，一定要提前考虑清楚是否能够承受更新失败的相关风险，并且保证有足够的时间和精力进行更新失败后重新安装。
+
+4、升级过程建议实用工具ssh到pve系统，不建议实用pve自带的shell。当然这个有一些个人习惯的问题，不是强制的，如果您习惯了实用pve自带的shell也没问题。
+
+5、本文执行命令全部在root用户下执行，而且强烈建议在root用户下进行升级操作。
+
+二、准备
+1、升级当前系统到pve7的最后一个小版本
+执行命令：apt update && apt upgrade && apt dist-upgrade
+
+执行apt update && apt upgrade && apt dist-upgrade执行apt update && apt upgrade && apt dist-upgrade
+
+执行之后遇到的所有选项全部都选择“Y”，当然也可以在命令后面直接添加-y参数执行，这个根据个人习惯吧。
+
+2、停止所有正在运行的虚拟机或容器，注意是停止不是暂停。
+3、进行升级检测
+执行命令：pve7to8
+
+执行pve7to8执行pve7to8
+
+这一步需要确认最终的执行结果FAILURES: 0，WARNINGS部分也要查看，是否存在关键的影响。
+
+4、继续进行升级检测
+执行命令：pve7to8 --full
+
+执行pve7to8 --full执行pve7to8 --full
+
+5、将所有 Debian 和 Proxmox VE 存储库条目更新为 Bookworm
+执行命令：sed -i 's/bullseye/bookworm/g' /etc/apt/sources.list
+
+这一步也可以直接编辑/etc/apt/sources.list把所有的仓库全部加'#'号进行注释.根据个人习惯进行处理吧。
+
+6、添加 Proxmox VE 8 软件包存储库
+执行命令：echo "deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
+
+7、更新 Ceph 软件包存储库
+执行命令：echo "deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription" > /etc/apt/sources.list.d/ceph.list
+
+8、刷新包的索引
+执行命令：apt update
+
+PVE7.4-15升级PVE8.0.3
+
+这步如果报401错误，则执行命令：echo "#deb https://enterprise.proxmox.com/debian/pve bullseye pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
+
+然后再次执行命令：apt update
+
+
+
+三、开始升级
+1、执行命令：apt dist-upgrade -y
+可以开始享受升级的过程了，强烈建议执行这步之前检查自己的更新源，调整更新源到国内镜像，不然由于网络问题会很慢，怎样调整更新源这里就不详细描述了，值得买已经有N多大神写过了。
+
+2、过程中出现选项全部默认选项就可以
+四、一些收尾工作
+1、执行命令：apt autoremove
+这个也可以不执行，主要用于删除一些无用的包。
+
+五、写在最后
+1、每位大老板的硬件、软件各不相同，不敢保证每个人的过程一模一样，如果升级途中遇到问题，可以下方讨论，值得买的大神很多，值友互相讨论探讨解决方法。
+
+2、再次强调一下升级有风险，执行需谨慎。
+
+作者声明本文无利益相关，欢迎值友理性交流，和谐讨论～
