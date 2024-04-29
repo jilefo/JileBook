@@ -1,0 +1,9 @@
+author: BramChen
+core-version: >=5.0.8
+dependents: 
+description: Chinese (Traditional)
+name: zh-Hant
+plugin-type: language
+title: $:/languages/zh-Hant
+type: application/json
+version: 5.3.3

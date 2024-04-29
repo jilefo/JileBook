@@ -1,0 +1,11 @@
+author: JeffreyWilkinson
+core-version: >=5.1.11
+dependents: 
+description: alternative markdown
+list: readme license
+name: plugins
+plugin-type: plugin
+source: https://github.com/buggyj/Tw5-tools
+title: $:/plugins/bj/plugins/marked
+type: application/json
+version: 1.11.0
